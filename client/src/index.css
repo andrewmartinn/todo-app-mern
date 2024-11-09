@@ -1,3 +1,47 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+input[type="radio"],
+input[type="checkbox"] {
+  display: none;
+}
+
+.custom-bubble {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 15px;
+  width: 15px;
+  border-radius: 50%;
+  border: 2px solid #ea40a4;
+  box-shadow: 0px 0px 4px rgba(234, 64, 164, 0.75);
+}
+
+.custom-bubble.personal {
+  border-color: #3a82ee;
+  box-shadow: 0px 0px 4px rgba(58, 130, 238, 0.75);
+}
+
+.custom-bubble::after {
+  content: "";
+  display: block;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  background-color: #ea40a4;
+  box-shadow: 0px 0px 4px rgba(234, 64, 164, 0.75);
+  border-radius: 50%;
+  transition: 0.2s ease-in-out;
+}
+
+.custom-bubble.personal::after {
+  background-color: #3a82ee;
+  box-shadow: 0px 0px 4px rgba(58, 130, 238, 0.75);
+}
+
+input:checked ~ .custom-bubble::after {
+  width: 7px;
+  height: 7px;
+  opacity: 1;
+}
