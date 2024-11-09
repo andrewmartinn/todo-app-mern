@@ -1,18 +1,18 @@
-import { useState } from "react";
 import { ITodo } from "../types";
+import useTodo from "../hooks/useTodo";
 
 interface TodoItemProps {
   todo: ITodo;
 }
 
 const TodoItem: React.FC<TodoItemProps> = ({ todo }) => {
-  const [checked, setChecked] = useState(todo.isComplete);
+  const { handleTodoDelete, handleTodoUpdate } = useTodo();
 
-  const isTodoComplete = checked;
+  const isTodoComplete = todo.isComplete;
 
   return (
     <div
-      className={`flex items-center rounded-lg bg-white p-4 shadow-sm ${checked ? "opacity-75" : ""}`}
+      className={`flex items-center rounded-lg bg-white p-4 shadow-sm ${isTodoComplete ? "opacity-75" : ""}`}
     >
       <label
         htmlFor={`todo-checkbox-${todo.id}`}
@@ -21,12 +21,12 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo }) => {
         <input
           type="checkbox"
           id={`todo-checkbox-${todo.id}`}
-          checked={checked}
-          onChange={() => setChecked((prevState) => !prevState)}
+          checked={todo.isComplete}
+          onChange={() => handleTodoUpdate(todo.id)}
           className="hidden"
         />
         <span
-          className={`custom-bubble ${todo.type} ${checked ? "checked" : ""}`}
+          className={`custom-bubble ${todo.type} ${isTodoComplete ? "checked" : ""}`}
         ></span>
       </label>
       <div className="flex-1">
@@ -34,7 +34,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo }) => {
           type="text"
           value={todo.text}
           readOnly
-          className={`${checked ? "line-through" : ""} appearance-none border-none outline-none`}
+          className={`${isTodoComplete ? "line-through" : ""} appearance-none border-none outline-none`}
         />
       </div>
       <div className="flex items-center gap-2">
@@ -46,6 +46,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo }) => {
         </button>
         <button
           disabled={isTodoComplete}
+          onClick={() => handleTodoDelete(todo.id)}
           className="bg-primary-100 rounded-md px-3 py-[0.3rem] text-sm text-white transition-opacity duration-[200ms] ease-in-out hover:opacity-75 disabled:pointer-events-none"
         >
           Delete

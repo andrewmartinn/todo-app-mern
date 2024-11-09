@@ -1,8 +1,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { ITodoForm, todoFormSchema } from "../utils/validator";
+import useTodo from "../hooks/useTodo";
 
 const AddTodo: React.FC = () => {
+  const { setTodos } = useTodo();
   const {
     control,
     register,
@@ -18,6 +20,14 @@ const AddTodo: React.FC = () => {
 
   const handleFormSubmit: SubmitHandler<ITodoForm> = (values) => {
     console.log(values);
+
+    const newTodo = {
+      id: Math.ceil(Math.random() * 100 + 1),
+      ...values,
+      isComplete: false,
+    };
+
+    setTodos((prevState) => [...prevState, newTodo]);
   };
 
   return (
