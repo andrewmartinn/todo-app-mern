@@ -1,15 +1,14 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
+import connectToDB from "./config/db.js";
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-app.get("/", async (req, res) => {
-  res.status(200).json({ success: true, message: "Hello world" });
-});
+connectToDB();
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () =>
