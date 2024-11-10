@@ -7,9 +7,9 @@ import toast from "react-hot-toast";
 export interface TodoContextType {
   todos: ITodo[];
   createTodo: (newTodo: ITodoForm) => Promise<void>;
-  handleTodoDelete: (id: string) => void;
-  handleTodoUpdate: (id: string, newTodoText?: string) => void;
-  toggleTodoComplete: (id: string) => void;
+  handleTodoDelete: (id: string) => Promise<void>;
+  handleTodoUpdate: (id: string, newTodoText: string) => Promise<void>;
+  toggleTodoComplete: (id: string) => Promise<void>;
 }
 
 const TodoContext = createContext<TodoContextType | undefined>(undefined);
@@ -46,7 +46,9 @@ export const TodoContextProvider: React.FC<TodoContextProviderProps> = ({
 
       if (response.data.success && response.data.newTodo) {
         const newTodo = response.data.newTodo;
+
         setTodos((prevTodos) => [...prevTodos, newTodo]);
+
         toast.success("Added Todo");
       } else {
         console.error("Error: newTodo is undefined or not valid.");
@@ -64,9 +66,11 @@ export const TodoContextProvider: React.FC<TodoContextProviderProps> = ({
 
       if (response.data.success) {
         const deletedTodo = response.data.deletedTodo;
+
         setTodos((prevTodos) =>
           prevTodos.filter((item) => item._id !== deletedTodo?._id),
         );
+
         toast.success("Deleted Todo");
       }
     } catch (error) {
@@ -74,25 +78,54 @@ export const TodoContextProvider: React.FC<TodoContextProviderProps> = ({
     }
   };
 
-  const handleTodoUpdate = (id: string, newTodoText?: string) => {
-    setTodos((prevTodos) =>
-      prevTodos.map((item) =>
-        item._id === id
-          ? {
-              ...item,
-              text: newTodoText ?? item.text,
-            }
-          : item,
-      ),
-    );
+  const handleTodoUpdate = async (id: string, newTodoText: string) => {
+    try {
+      const response: AxiosResponse<IApiResponse<ITodo>> = await axios.patch(
+        `${import.meta.env.VITE_SERVER_URL}/api/todos/update/${id}`,
+        {
+          updatedText: newTodoText,
+        },
+      );
+
+      if (response.data.success) {
+        const updatedTodo = response.data.updatedTodo;
+
+        setTodos((prevTodos) =>
+          prevTodos.map((item) =>
+            item._id === updatedTodo?._id
+              ? { ...item, text: updatedTodo.text }
+              : item,
+          ),
+        );
+
+        toast.success(`${updatedTodo?.text} Updated`);
+      }
+    } catch (error) {
+      console.error("Error updating todo: ", error);
+    }
   };
 
-  const toggleTodoComplete = (id: string) => {
-    setTodos((prevTodos) =>
-      prevTodos.map((item) =>
-        item._id === id ? { ...item, isComplete: !item.isComplete } : item,
-      ),
-    );
+  const toggleTodoComplete = async (id: string): Promise<void> => {
+    try {
+      const response: AxiosResponse<IApiResponse<ITodo>> = await axios.patch(
+        `${import.meta.env.VITE_SERVER_URL}/api/todos/status/${id}`,
+      );
+      if (response.data.success) {
+        const updatedTodo = response.data.updatedTodo;
+
+        setTodos((prevTodos) =>
+          prevTodos.map((item) =>
+            item._id === updatedTodo?._id
+              ? { ...item, isComplete: updatedTodo?.isComplete }
+              : item,
+          ),
+        );
+
+        toast.success(`${updatedTodo?.text} Status Changed`);
+      }
+    } catch (error) {
+      console.error("Error updating todo status: ", error);
+    }
   };
 
   useEffect(() => {

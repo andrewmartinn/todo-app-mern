@@ -23,9 +23,9 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo }) => {
     setTodoText(e.target.value);
   };
 
-  const handleInputBlur = () => {
+  const handleInputBlur = async () => {
     if (todoText !== todo.text) {
-      handleTodoUpdate(todo._id, todoText);
+      await handleTodoUpdate(todo._id, todoText);
     }
     setIsEditing(false);
   };
@@ -41,15 +41,15 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo }) => {
       className={`flex items-center rounded-lg bg-white p-4 shadow-sm ${isTodoComplete ? "opacity-75" : ""}`}
     >
       <label
-        htmlFor={`todo-checkbox-${todo.id}`}
+        htmlFor={`todo-checkbox-${todo._id}`}
         className="mr-4 flex cursor-pointer items-center"
       >
         <input
           ref={todoInputRef}
           type="checkbox"
-          id={`todo-checkbox-${todo.id}`}
+          id={`todo-checkbox-${todo._id}`}
           checked={todo.isComplete}
-          onChange={() => toggleTodoComplete(todo.id)}
+          onChange={() => toggleTodoComplete(todo._id)}
           className="hidden"
         />
         <span
@@ -63,7 +63,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo }) => {
           readOnly={!isEditing}
           onBlur={handleInputBlur}
           onChange={handleInputChange}
-          className={` ${isEditing ? "border border-gray-300" : "border-none outline-none"} ${isTodoComplete ? "line-through" : ""} rounded py-1 pl-2`}
+          className={` ${isEditing ? "border border-gray-300" : "border-none outline-none"} ${isTodoComplete ? "line-through" : ""} w-[98%] rounded py-1 pl-2`}
         />
       </div>
       <div className="flex items-center gap-2">
