@@ -25,7 +25,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo }) => {
 
   const handleInputBlur = () => {
     if (todoText !== todo.text) {
-      handleTodoUpdate(todo.id, todoText);
+      handleTodoUpdate(todo._id, todoText);
     }
     setIsEditing(false);
   };
@@ -72,14 +72,14 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo }) => {
             <button
               onClick={handleEditClick}
               disabled={isTodoComplete}
-              className="bg-primary-200 rounded-md px-3 py-[0.3rem] text-sm text-white transition-opacity duration-[200ms] ease-in-out hover:opacity-75 disabled:pointer-events-none"
+              className="rounded-md bg-primary-200 px-3 py-[0.3rem] text-sm text-white transition-opacity duration-[200ms] ease-in-out hover:opacity-75 disabled:pointer-events-none"
             >
               Edit
             </button>
             <button
               disabled={isTodoComplete}
-              onClick={() => handleTodoDelete(todo.id)}
-              className="bg-primary-100 rounded-md px-3 py-[0.3rem] text-sm text-white transition-opacity duration-[200ms] ease-in-out hover:opacity-75 disabled:pointer-events-none"
+              onClick={() => handleTodoDelete(todo._id)}
+              className="rounded-md bg-primary-100 px-3 py-[0.3rem] text-sm text-white transition-opacity duration-[200ms] ease-in-out hover:opacity-75 disabled:pointer-events-none"
             >
               Delete
             </button>

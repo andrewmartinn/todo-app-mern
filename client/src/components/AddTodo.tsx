@@ -4,7 +4,7 @@ import { ITodoForm, todoFormSchema } from "../utils/validator";
 import useTodo from "../hooks/useTodo";
 
 const AddTodo: React.FC = () => {
-  const { setTodos } = useTodo();
+  const { createTodo } = useTodo();
   const {
     control,
     register,
@@ -18,17 +18,12 @@ const AddTodo: React.FC = () => {
     resolver: zodResolver(todoFormSchema),
   });
 
-  const handleFormSubmit: SubmitHandler<ITodoForm> = (values) => {
-    console.log(values);
-
-    const newTodo = {
-      ...values,
-      isComplete: false,
-      createdAt: new Date().getTime(),
-      id: Math.ceil(Math.random() * 100 + 1),
-    };
-
-    setTodos((prevState) => [...prevState, newTodo]);
+  const handleFormSubmit: SubmitHandler<ITodoForm> = async (values) => {
+    try {
+      await createTodo(values);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -114,7 +109,7 @@ const AddTodo: React.FC = () => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="bg-primary-100 rounded-lg px-4 py-2 text-white transition-opacity duration-[200ms] ease-in-out hover:opacity-75 disabled:opacity-75"
+          className="rounded-lg bg-primary-100 px-4 py-2 text-white transition-opacity duration-[200ms] ease-in-out hover:opacity-75 disabled:opacity-75"
         >
           Add Todo
         </button>
