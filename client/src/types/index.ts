@@ -1,6 +1,9 @@
+type Category = "work" | "personal";
+
 export interface ITodo {
   id: number;
   text: string;
-  type: string;
+  category: Category;
   isComplete: boolean;
+  createdAt: number;
 }

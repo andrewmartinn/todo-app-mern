@@ -5,7 +5,8 @@ export interface TodoContextType {
   todos: ITodo[];
   setTodos: React.Dispatch<React.SetStateAction<ITodo[]>>;
   handleTodoDelete: (id: number) => void;
-  handleTodoUpdate: (id: number) => void;
+  handleTodoUpdate: (id: number, newTodoText?: string) => void;
+  toggleTodoComplete: (id: number) => void;
 }
 
 const TodoContext = createContext<TodoContextType | undefined>(undefined);
@@ -21,26 +22,30 @@ export const TodoContextProvider: React.FC<TodoContextProviderProps> = ({
     {
       id: 1,
       text: "Todo 1",
-      type: "work",
+      category: "work",
       isComplete: false,
+      createdAt: new Date().getTime(),
     },
     {
       id: 2,
       text: "Todo 2",
-      type: "personal",
+      category: "personal",
       isComplete: false,
+      createdAt: new Date().getTime(),
     },
     {
       id: 3,
       text: "Todo 3",
-      type: "personal",
+      category: "personal",
       isComplete: false,
+      createdAt: new Date().getTime(),
     },
     {
       id: 4,
       text: "Todo 4",
-      type: "personal",
+      category: "personal",
       isComplete: true,
+      createdAt: new Date().getTime(),
     },
   ]);
 
@@ -48,7 +53,20 @@ export const TodoContextProvider: React.FC<TodoContextProviderProps> = ({
     setTodos((prevTodos) => prevTodos.filter((item) => item.id !== id));
   };
 
-  const handleTodoUpdate = (id: number) => {
+  const handleTodoUpdate = (id: number, newTodoText?: string) => {
+    setTodos((prevTodos) =>
+      prevTodos.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              text: newTodoText ?? item.text,
+            }
+          : item,
+      ),
+    );
+  };
+
+  const toggleTodoComplete = (id: number) => {
     setTodos((prevTodos) =>
       prevTodos.map((item) =>
         item.id === id ? { ...item, isComplete: !item.isComplete } : item,
@@ -58,7 +76,13 @@ export const TodoContextProvider: React.FC<TodoContextProviderProps> = ({
 
   return (
     <TodoContext.Provider
-      value={{ todos, setTodos, handleTodoDelete, handleTodoUpdate }}
+      value={{
+        todos,
+        setTodos,
+        handleTodoDelete,
+        handleTodoUpdate,
+        toggleTodoComplete,
+      }}
     >
       {children}
     </TodoContext.Provider>

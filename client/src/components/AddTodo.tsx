@@ -13,7 +13,7 @@ const AddTodo: React.FC = () => {
   } = useForm<ITodoForm>({
     defaultValues: {
       text: "",
-      type: undefined,
+      category: undefined,
     },
     resolver: zodResolver(todoFormSchema),
   });
@@ -22,9 +22,10 @@ const AddTodo: React.FC = () => {
     console.log(values);
 
     const newTodo = {
-      id: Math.ceil(Math.random() * 100 + 1),
       ...values,
       isComplete: false,
+      createdAt: new Date().getTime(),
+      id: Math.ceil(Math.random() * 100 + 1),
     };
 
     setTodos((prevState) => [...prevState, newTodo]);
@@ -66,7 +67,7 @@ const AddTodo: React.FC = () => {
               className="flex cursor-pointer flex-col items-center justify-center gap-0.5 rounded-lg bg-white p-4 shadow-sm"
             >
               <Controller
-                name="type"
+                name="category"
                 control={control}
                 render={({ field }) => (
                   <>
@@ -74,7 +75,7 @@ const AddTodo: React.FC = () => {
                       {...field}
                       type="radio"
                       id="category1"
-                      value="Work"
+                      value="work"
                       className="hidden"
                     />
                     <span className="custom-bubble work"></span>
@@ -88,7 +89,7 @@ const AddTodo: React.FC = () => {
               className="flex cursor-pointer flex-col items-center justify-center gap-0.5 rounded-lg bg-white p-4 shadow-sm"
             >
               <Controller
-                name="type"
+                name="category"
                 control={control}
                 render={({ field }) => (
                   <>
@@ -96,7 +97,7 @@ const AddTodo: React.FC = () => {
                       {...field}
                       type="radio"
                       id="category2"
-                      value="Personal"
+                      value="personal"
                       className="hidden"
                     />
                     <span className="custom-bubble personal"></span>
@@ -105,8 +106,8 @@ const AddTodo: React.FC = () => {
                 )}
               />
             </label>
-            {errors.type && (
-              <p className="text-xs text-red-500">{errors.type.message}</p>
+            {errors.category && (
+              <p className="text-xs text-red-500">{errors.category.message}</p>
             )}
           </div>
         </div>
