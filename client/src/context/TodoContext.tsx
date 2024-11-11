@@ -3,6 +3,7 @@ import { IApiResponse, ITodo } from "../types";
 import axios, { AxiosResponse } from "axios";
 import { ITodoForm } from "../utils/validator";
 import toast from "react-hot-toast";
+import useAuth from "../hooks/useAuth";
 
 export interface TodoContextType {
   todos: ITodo[];
@@ -21,12 +22,24 @@ interface TodoContextProviderProps {
 export const TodoContextProvider: React.FC<TodoContextProviderProps> = ({
   children,
 }) => {
+  const { token } = useAuth();
   const [todos, setTodos] = useState<ITodo[]>([]);
+
+  const getAuthToken = (): string | null => {
+    return token || localStorage.getItem("accessToken");
+  };
 
   const fetchTodos = async (): Promise<void> => {
     try {
+      const authToken = getAuthToken();
+
       const response: AxiosResponse<IApiResponse<ITodo[]>> = await axios.get(
         `${import.meta.env.VITE_SERVER_URL}/api/todos`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        },
       );
 
       if (response.data.success) {
@@ -39,9 +52,16 @@ export const TodoContextProvider: React.FC<TodoContextProviderProps> = ({
 
   const createTodo = async (newTodo: ITodoForm): Promise<void> => {
     try {
+      const authToken = getAuthToken();
+
       const response: AxiosResponse<IApiResponse<ITodo>> = await axios.post(
         `${import.meta.env.VITE_SERVER_URL}/api/todos`,
         newTodo,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        },
       );
 
       if (response.data.success && response.data.newTodo) {
@@ -60,8 +80,15 @@ export const TodoContextProvider: React.FC<TodoContextProviderProps> = ({
 
   const handleTodoDelete = async (id: string): Promise<void> => {
     try {
+      const authToken = getAuthToken();
+
       const response: AxiosResponse<IApiResponse<ITodo>> = await axios.delete(
         `${import.meta.env.VITE_SERVER_URL}/api/todos/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        },
       );
 
       if (response.data.success) {
@@ -80,10 +107,17 @@ export const TodoContextProvider: React.FC<TodoContextProviderProps> = ({
 
   const handleTodoUpdate = async (id: string, newTodoText: string) => {
     try {
+      const authToken = getAuthToken();
+
       const response: AxiosResponse<IApiResponse<ITodo>> = await axios.patch(
         `${import.meta.env.VITE_SERVER_URL}/api/todos/update/${id}`,
         {
           updatedText: newTodoText,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
         },
       );
 
@@ -107,9 +141,18 @@ export const TodoContextProvider: React.FC<TodoContextProviderProps> = ({
 
   const toggleTodoComplete = async (id: string): Promise<void> => {
     try {
+      const authToken = getAuthToken();
+
       const response: AxiosResponse<IApiResponse<ITodo>> = await axios.patch(
         `${import.meta.env.VITE_SERVER_URL}/api/todos/status/${id}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
+        },
       );
+
       if (response.data.success) {
         const updatedTodo = response.data.updatedTodo;
 
@@ -130,7 +173,7 @@ export const TodoContextProvider: React.FC<TodoContextProviderProps> = ({
 
   useEffect(() => {
     fetchTodos();
-  }, []);
+  }, [token]);
 
   return (
     <TodoContext.Provider
