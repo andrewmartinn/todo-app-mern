@@ -128,9 +128,9 @@ export const TodoContextProvider: React.FC<TodoContextProviderProps> = ({
     }
   };
 
-  // useEffect(() => {
-  //   fetchTodos();
-  // }, []);
+  useEffect(() => {
+    fetchTodos();
+  }, []);
 
   return (
     <TodoContext.Provider

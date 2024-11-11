@@ -109,7 +109,7 @@ const AddTodo: React.FC = () => {
         <button
           type="submit"
           disabled={isSubmitting}
-          className="rounded-lg bg-primary-100 px-4 py-2 text-white transition-opacity duration-[200ms] ease-in-out hover:opacity-75 disabled:opacity-75"
+          className="rounded-lg bg-primary-500 px-4 py-2 text-white transition-opacity duration-[200ms] ease-in-out hover:opacity-75 disabled:opacity-75"
         >
           Add Todo
         </button>

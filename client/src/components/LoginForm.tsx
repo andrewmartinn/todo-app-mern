@@ -1,19 +1,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { z } from "zod";
+import { ILoginForm, loginFormSchema } from "../utils/validator";
+import useAuth from "../hooks/useAuth";
 
 interface LoginFormProps {
   setCurrentView: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const loginFormSchema = z.object({
-  email: z.string().email("Invalid email"),
-  password: z.string().min(8, "Password must be atleast 8 characters"),
-});
-
-type ILoginForm = z.infer<typeof loginFormSchema>;
-
 const LoginForm: React.FC<LoginFormProps> = ({ setCurrentView }) => {
+  const { loginUser, error } = useAuth();
   const {
     register,
     handleSubmit,
@@ -26,8 +21,12 @@ const LoginForm: React.FC<LoginFormProps> = ({ setCurrentView }) => {
     resolver: zodResolver(loginFormSchema),
   });
 
-  const handleFormSubmit: SubmitHandler<ILoginForm> = (values) => {
-    console.log(values);
+  const handleFormSubmit: SubmitHandler<ILoginForm> = async (values) => {
+    try {
+      await loginUser(values);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -59,6 +58,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ setCurrentView }) => {
             <p className="text-sm text-red-400">{errors.password.message}</p>
           )}
         </div>
+        {error && <p className="text-sm text-red-400">{error}</p>}
         <button
           disabled={isSubmitting}
           className="mt-3 rounded-lg bg-black px-3 py-2 text-white transition duration-[200ms] ease-in-out hover:opacity-75 disabled:opacity-75"

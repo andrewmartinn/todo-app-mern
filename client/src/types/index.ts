@@ -1,3 +1,6 @@
+import { JwtPayload } from "jwt-decode";
+import { ILoginForm, IRegisterForm } from "../utils/validator";
+
 type Category = "work" | "personal";
 
 export interface ITodo {
@@ -15,4 +18,19 @@ export interface IApiResponse<T> {
   newTodo?: T;
   updatedTodo?: T;
   deletedTodo?: T;
+}
+
+export interface AuthContextType {
+  token: string | null;
+  user: string | null;
+  userId: string | null;
+  error: string | null;
+  logoutUser: () => void;
+  loginUser: (values: ILoginForm) => Promise<void>;
+  registerUser: (values: IRegisterForm) => Promise<void>;
+}
+
+export interface CustomJwtPayload extends JwtPayload {
+  username: string;
+  userId: string;
 }

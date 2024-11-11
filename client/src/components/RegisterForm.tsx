@@ -1,20 +1,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { z } from "zod";
+import { IRegisterForm, registerFormSchema } from "../utils/validator";
+import useAuth from "../hooks/useAuth";
 
 interface RegisterFormProps {
   setCurrentView: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const registerFormSchema = z.object({
-  username: z.string().min(1, "Username is required"),
-  email: z.string().email("Invalid email"),
-  password: z.string().min(8, "Password must be atleast 8 characters"),
-});
-
-type IRegisterForm = z.infer<typeof registerFormSchema>;
-
 const RegisterForm: React.FC<RegisterFormProps> = ({ setCurrentView }) => {
+  const { registerUser } = useAuth();
   const {
     register,
     handleSubmit,
@@ -28,8 +22,12 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ setCurrentView }) => {
     resolver: zodResolver(registerFormSchema),
   });
 
-  const handleFormSubmit: SubmitHandler<IRegisterForm> = (values) => {
-    console.log(values);
+  const handleFormSubmit: SubmitHandler<IRegisterForm> = async (values) => {
+    try {
+      await registerUser(values);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
