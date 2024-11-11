@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import connectToDB from "./config/db.js";
 import todoRouter from "./routes/todoRoutes.js";
+import userRouter from "./routes/userRoutes.js";
 
 const app = express();
 
@@ -11,6 +12,7 @@ app.use(express.json());
 
 connectToDB();
 
+app.use("/api/users", userRouter);
 app.use("/api/todos", todoRouter);
 
 const PORT = process.env.PORT || 3000;
