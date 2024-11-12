@@ -2,7 +2,9 @@ import Todo from "../models/todoModel.js";
 
 const getAllTodos = async (req, res) => {
   try {
-    const todos = await Todo.find({}).sort({ createdAt: -1 });
+    const { userId } = req.user;
+
+    const todos = await Todo.find({ user: userId }).sort({ createdAt: -1 });
 
     if (!todos) {
       return res
@@ -19,6 +21,7 @@ const getAllTodos = async (req, res) => {
 
 const createTodo = async (req, res) => {
   try {
+    const { userId } = req.user;
     const { text, category } = req.body;
 
     if (!text || typeof text !== "string" || text.trim() === "") {
@@ -36,6 +39,7 @@ const createTodo = async (req, res) => {
     const newTodo = new Todo({
       text,
       category,
+      user: userId,
     });
 
     await newTodo.save();
@@ -50,10 +54,11 @@ const createTodo = async (req, res) => {
 const updateTodoText = async (req, res) => {
   try {
     const { id } = req.params;
+    const { userId } = req.user;
     const { updatedText } = req.body;
 
     const updatedTodo = await Todo.findByIdAndUpdate(
-      id,
+      { _id: id, user: userId },
       { text: updatedText },
       { new: true }
     );
@@ -76,8 +81,9 @@ const updateTodoText = async (req, res) => {
 const updateTodoStatus = async (req, res) => {
   try {
     const { id } = req.params;
+    const { userId } = req.user;
 
-    const todoToUpdate = await Todo.findById(id);
+    const todoToUpdate = await Todo.findById({ _id: id, user: userId });
 
     if (!todoToUpdate) {
       return res
@@ -101,8 +107,9 @@ const updateTodoStatus = async (req, res) => {
 const deleteTodo = async (req, res) => {
   try {
     const { id } = req.params;
+    const { userId } = req.user;
 
-    const deletedTodo = await Todo.findByIdAndDelete(id);
+    const deletedTodo = await Todo.findByIdAndDelete({ _id: id, user: userId });
 
     if (!deleteTodo) {
       return res

@@ -172,7 +172,9 @@ export const TodoContextProvider: React.FC<TodoContextProviderProps> = ({
   };
 
   useEffect(() => {
-    fetchTodos();
+    if (token || localStorage.getItem("accessToken")) {
+      fetchTodos();
+    }
   }, [token]);
 
   return (

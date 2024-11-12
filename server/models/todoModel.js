@@ -7,6 +7,7 @@ const todoSchema = new Schema({
   category: { type: String, required: true },
   isComplete: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
+  user: { type: Schema.Types.ObjectId, ref: "User", required: true },
 });
 
 const Todo = models.Todo || model("Todo", todoSchema);
